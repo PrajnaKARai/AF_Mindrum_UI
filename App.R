@@ -283,7 +283,8 @@ ui <- fluidPage(
     )),
   sidebarLayout(
     sidebarPanel(width = 4,
-                 style = "height: 100vh; overflow-y: auto",
+                 # style = "height: 100vh; overflow-y: auto",
+                 style = "height: 100%; overflow-y: auto",
                  # Collapsible sections
                  accordion(
                    id = "collapseSidebar",
@@ -761,8 +762,8 @@ server <- function(input, output, session) {
   })
   
   treeless_total_grazing <- reactive({
-        if (!input$treeless_include_animals_c || is.null(input$treeless_animal_type) || length(input$treeless_animal_type) == 0) {
-        return(0)
+    if (!input$treeless_include_animals_c || is.null(input$treeless_animal_type) || length(input$treeless_animal_type) == 0) {
+      return(0)
     }
     vals <- sapply(input$treeless_animal_type, function(animal) {
       val <- input[[paste0("treeless_", animal, "_intensity_c")]]
@@ -802,7 +803,7 @@ server <- function(input, output, session) {
     if (!input$AF1_include_animals_c || is.null(input$AF1_animal_type) || length(input$AF1_animal_type) == 0) {
       return(0)
     }
-
+    
     vals <- sapply(input$AF1_animal_type, function(animal) {
       val <- input[[paste0("AF1_", animal, "_intensity_c")]]
       if (is.null(val)) 0 else val
@@ -1366,7 +1367,7 @@ server <- function(input, output, session) {
   # for(i in colnames(x)) assign(i, as.numeric(x[1,i]),envir=.GlobalEnv)
   # }
   # generated_variables <- make_variables(as.estimate(input_estimates())) #input_file    Works by randomly selecting values from each variable of the input table and storing them in the global environment.These fixed values are not the ones used later in the Monte Carlo simulation but serve the sole purpose of allowing to run parts of the model and thereby testing is part for part
-
+  
   # Create the function for mcSimualtion ####
   # This functions contains all the mathematical formulations for all three systems and their components
   AF_benefit <- function(x, varnames) {
@@ -1459,6 +1460,11 @@ server <- function(input, output, session) {
     #Winter Crop
     Winter_cover_crop_yield[Winter_cover_crop_indices] <- vv(winter_cover_crop_yield_p, var_CV_p, length(Winter_cover_crop_indices)) *arable_area_c
     
+    #Labour costs
+    Herbal_ley_labour_cost_CR1 <- rep(0, n_years_c)
+    Winter_wheat_labour_cost_CR1 <- rep(0, n_years_c)
+    Herbal_ley_grazing_labour_cost_CR1 <- rep(0, n_years_c)
+    
     #Treeless system ###############################################################
     #Crop rotation 1:#####----------------------------------------------------------
     #Benefits:
@@ -1490,11 +1496,6 @@ server <- function(input, output, session) {
       
       Herbal_ley_management_cost_CR1[Herbal_ley_indices1] <- Herbal_ley_management_cost[Herbal_ley_indices1]
       Winter_wheat_management_cost_CR1[Winter_wheat_indices1] <- Winter_wheat_management_cost[Winter_wheat_indices1]
-      
-      #Labour costs
-      Herbal_ley_labour_cost_CR1 <- rep(0, n_years_c)
-      Winter_wheat_labour_cost_CR1 <- rep(0, n_years_c)
-      Herbal_ley_grazing_labour_cost_CR1 <- rep(0, n_years_c)
       
       Herbal_ley_labour_cost_CR1[Herbal_ley_indices1] <- Herbal_ley_labour_cost[Herbal_ley_indices1]
       Herbal_ley_grazing_labour_cost_CR1[Herbal_ley_indices1] <- Herbal_ley_grazing_labour_cost[Herbal_ley_indices1]
@@ -2114,7 +2115,7 @@ server <- function(input, output, session) {
     } else {
       AF2_total_one_time_funding <- AF2_total_one_time_funding_c
     }
-
+    
     AF2_tree_benefit <- AF2_C_benefit + AF2_rowan_benefit + AF2_hazel_benefit + AF2_damson_benefit + 
       AF2_Nonmarket_ES_benefit + AF2_total_annual_funding_c + AF2_total_one_time_funding
     
@@ -2124,7 +2125,7 @@ server <- function(input, output, session) {
     AF2_total_woody_benefit <- rep(0, n_years_c) 
     AF2_total_woody_benefit <- vv(woody_benefit_shade_p, var_CV_p, n_years_c) + vv(woody_benefit_nutrition_p, var_CV_p, n_years_c)+
       vv(AF2_woody_benefit_windreduc_p, var_CV_p, n_years_c) #to be used in crop rotation part of code
-
+    
     #Crop rotation 1:#####----------------------------------------------------------
     if(AF2_system_crop_rotation_1_c == 1){
       
@@ -2411,7 +2412,7 @@ server <- function(input, output, session) {
   })
   
   #print (mcSimulation_results)
-#Plot function to plot combined graphs  
+  #Plot function to plot combined graphs  
   Plot_mc_output <- function(mc_output, prefixes, total_area_value, plot_type, input_estimates) {
     # Extract the "y" element from the Monte Carlo output list
     y_data <- mc_output$y
@@ -2549,7 +2550,7 @@ server <- function(input, output, session) {
   plot1 <- reactive({Plot_mc_output(mcSimulation_results(), "NPV_", "arable_area_c", "box", input_estimates) })
   plot2 <- reactive({ Plot_mc_output(mcSimulation_results(), "NPVtrade_off_AF1", "arable_area_c", "density", input_estimates) })
   plot3 <- reactive({Plot_mc_output(mcSimulation_results(), "NPVtrade_off", "arable_area_c", "ridge", input_estimates)})
-
+  
   ### Render the plots using the reactive expressions
   output$distPlot <- renderPlot({
     req(mcSimulation_results())
