@@ -890,9 +890,9 @@ server <- function(input, output, session) {
   
   # Determine file directory based on OS
   file_dir <- if (Sys.info()[["sysname"]] == "Windows") {
-    "user-states/AF_User_Interface/"  # Use Windows path for local testing
+    "user-states/Mindrum/"  # Use Windows path for local testing
   } else {
-    "/srv/shiny-app-data/user-states/AF_User_Interface/"  # Linux path for server
+    "/srv/shiny-app-data/user-states/Mindrum/"  # Linux path for server
   }
   
   # Get user ID or set default for testing
@@ -2626,9 +2626,9 @@ server <- function(input, output, session) {
   }
   
   ### Create download handlers for each plot
-  output$save_plot1 <- createDownloadHandler(plot1, "Plot_comparison_outcome")
-  output$save_plot2 <- createDownloadHandler(plot2, "Plot_decision_outcome")
-  output$save_plot3 <- createDownloadHandler(plot3, "Cashflow")
+  output$save_plot1 <- createDownloadHandler(plot1, "Plot_comparison_outcome_")
+  # output$save_plot2 <- createDownloadHandler(plot2, "Plot_decision_outcome_")
+  output$save_plot3 <- createDownloadHandler(plot3, "Probabilistic_outcome_")
 }
 
 # Run the Shiny app
