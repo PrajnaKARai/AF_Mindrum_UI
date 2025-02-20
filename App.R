@@ -2498,13 +2498,14 @@ server <- function(input, output, session) {
     if(plot_type == "density"){
       plot <- ggplot(stacked_data, aes(x = values, fill = ind, color = ind)) +
         geom_density(alpha = 0.4, size = 0.7) + # Create density plot with transparency and line size
-        # xlim( (min(stacked_data$values) + min(stacked_data$values)/2),
-        #       (max(stacked_data$values) + max(stacked_data$values)/2)
-        # ) +
+        xlim( (min(stacked_data$values) - max(stacked_data$values)/5),
+              (max(stacked_data$values) + max(stacked_data$values)/5)
+        ) +
         theme_minimal() +
         theme(
           axis.title = element_text(size = 15, colour = "black"),
-          axis.text = element_text(size = 12, colour = "black"),
+          axis.text.x = element_text(size = 12, colour = "black"),
+          axis.text.y = element_blank(),
           panel.background =  element_rect(fill = "white",
                                            colour = "white"),
           plot.background =  element_rect(fill = "white",
@@ -2526,8 +2527,8 @@ server <- function(input, output, session) {
         theme(
           axis.title = element_text(size = 15, colour = "black"),
           axis.text.y = element_text(size = 15,
-                                     angle = 360,
-                                     hjust = -0.5,
+                                     # angle = 360,
+                                     vjust = -6,
                                      colour = "black"),
           axis.text = element_text(size = 10, colour = "black"),
           panel.background =  element_rect(fill = "white",
