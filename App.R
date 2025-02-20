@@ -251,6 +251,22 @@ ui <- fluidPage(
       .accordion-button:focus {
         box-shadow: none;
       }
+      .my-btn {
+        display: block;
+        text-align: center;
+        background: #238a21; 
+    /*  rgb(241 119 65 / 75%); */
+    /*  width: 50%; */
+    /*  height: 100%; */
+        color: white;
+    /*  transform: translateX(-50%); */
+    /*  left: 50%; */
+    /*  font-size: 3rem; */
+        border-radius: 20px;
+        position: relative;
+        margin-top: 25px;
+        margin-bottom: 25px;
+      }
      "))
   ),
   # Responsive Layout with Animated Width
@@ -267,18 +283,20 @@ ui <- fluidPage(
                                tags$img(src = "ReFOREST_logo_horizontal_transparent.png", 
                                         style = "max-width: 100%; height: auto;"
                                         #height = "70px"
-                               ))),
+                               ),
+                               target="_blank")),
                  column(width = 8,
                         align = "center",
                         h2(class = "app-title",
                            "Holistic Decision Analysis for an Agrisilvicultural Agroforestry System")),
                  column(width = 2,
                         align = "left",
-                        tags$a(href = "https://www.gartenbauwissenschaft.uni-bonn.de/", # Add URL here
-                               tags$img(src = "UniBonnHortiBonn_logo_transparent.png", 
+                        tags$a(href = "https://www.gartenbauwissenschaften.uni-bonn.de/", # Add URL here
+                               tags$img(src = "UniBonnHortiBonn_logo_transparent.png",
                                         style = "max-width: 100%; height: auto;"
                                         #height = "100px"
-                               ))),
+                               ),
+                               target="_blank")),
                  windowTitle = "MyPage")
     )),
   sidebarLayout(
@@ -302,8 +320,8 @@ ui <- fluidPage(
                      textInput("project_name", "Project Name:", value = ""),
                      actionButton("save", "Save Settings"),
                      
-                     column(width = 6,
-                            textInput("version", label = "Version", value = "1")),
+                     # column(width = 6,
+                     #        textInput("version", label = "Version", value = "1")),
                      
                      selectInput("version_select", "Select Version to Load:", choices = NULL),
                      actionButton("load", "Load Selected Version"),
@@ -313,9 +331,9 @@ ui <- fluidPage(
                      
                      ########### save load delete logic ##############
                      
-                     dateInput("date", label = "Date input", value = Sys.Date()), # format(Sys.time(), "%Y-%m-%d_%H-%M" for naming the downloaded file
-                     
-                     downloadButton("save_data", "Save project data"), # !! enable save local machine and our server 
+                     # dateInput("date", label = "Date input", value = Sys.Date()), # format(Sys.time(), "%Y-%m-%d_%H-%M" for naming the downloaded file
+                     # 
+                     # downloadButton("save_data", "Save project data"), # !! enable save local machine and our server 
                      br(),
                      br(),
                      actionButton("run_simulation", "Run Model", icon = icon("play"), class = "btn-primary"),
@@ -409,7 +427,7 @@ ui <- fluidPage(
                      sliderInput("SRC_machine_rent_p", "Rent of planting machine [GBP]",
                                  min = 1, max = 500, value = c(150,300)),
                      sliderInput("harvest_interval_SRC_p", "Number of years between SRC harvest [ha]",
-                                 min = 4, max = 60, value = c(3,5)),
+                                 min = 1, max = 60, value = c(3,5)),
                      sliderInput("af1_added_management_time_factor_p", "Extra time for managing AF vs. Baseline [%]",
                                  min = 1, max = 10, value = c(1.05,1.2)),
                      sliderInput("AF1_soil_loss_water_p", "Soil loss due to water [tons/ha/year]",
@@ -623,43 +641,59 @@ ui <- fluidPage(
       width = 8,
       # Display plots of DA
       fluidRow(
+        column(width = 4),
         #textOutput("display_version_1"),
         # Added a button to open the URL
-        actionButton("open_url", "Click here for latest info on Sustainable Farming Incentive"), 
-        column(width = 7,
-               h5('1. Probabilistic outcome distributions from Monte Carlo simulation for baseline and the decision intervention.'))
-      ),
+        # actionButton("open_url", "Click here for latest info on Sustainable Farming Incentive"), 
+        column(width = 4,
+               tags$a("Click here for latest info on Sustainable Farming Incentive",
+                      href = "https://www.gov.uk/government/publications/sustainable-farming-incentive-scheme-expanded-offer-for-2024",
+                      target="_blank",
+                      class = "my-btn")),
+        column(width = 4)
+        ),
+      h5('Probabilistic outcome distributions from Monte Carlo simulation for baseline and the decision intervention.'),
       plotOutput("distPlot"),
-      p('The graph above provides a visual comparison of the outcome distributions 
-        for the baseline and intervention options in terms of net present value 
-        (NPV in GBP/ha) over the simulated period. The x-axis represents the NPV, 
-        calculated as the sum of discounted cash flows for each simulation year. 
-        The y-axis shows the probability of occurrence, indicating the likelihood 
-        of different NPV values. A higher value on the y-axis corresponds to a 
-        greater probability of the associated NPV on the x-axis.'),
+      p(
+        'The graphs above compare the net present value (NPV) distributions
+        between baseline and intervention options, expressed in GBP/ha across
+        the simulation period. The x-axis displays NPV values, representing the
+        sum of discounted cash flows, while the y-axis presents the different
+        scenarios being compared.'
+      ),       # p('The graph above provides a visual comparison of the outcome distributions 
+      #   for the baseline and intervention options in terms of net present value 
+      #   (NPV in GBP/ha) over the simulated period. The x-axis represents the NPV, 
+      #   calculated as the sum of discounted cash flows for each simulation year. 
+      #   The y-axis shows the probability of occurrence, indicating the likelihood 
+      #   of different NPV values. A higher value on the y-axis corresponds to a 
+      #   greater probability of the associated NPV on the x-axis.'),
       downloadButton("save_plot1", "Save Plot"),
       br(), # blank line
       br(), # blank line
-      h5('2. Probabilistic outcome of the decision in terms of NPV over the simulation period.'),
-      plotOutput("distPlot2"),
-      p(
-        'The graph above illustrates the outcome in terms of NPV in GBP/ha) over 
-        the simulated years, comparing the baseline scenario with the intervention. 
-        It highlights the differences in net cash flows between the two optioons. 
-        The right-skewness of the graph suggests that the intervention is generally 
-        favorable. However, since the distribution includes both positive and 
-        negative values, there remains a non-zero probability that the intervention 
-        may not always yield a more favorable outcome than the baseline. The 
-        integrated box plot shows that while the interquartile range (IQR) is mostly positive, 
-        it does include some negative values. The vertical line within the box plot represents the median NPV.'),
-      downloadButton("save_plot2", "Save Plot"), 
-      br(), # blank line
-      br(), # blank line
-      h5('Figure 3. Cashflow.'),
+      # h5('2. Probabilistic outcome of the decision in terms of NPV over the simulation period.'),
+      # plotOutput("distPlot2"),
+      # p(
+      #   'The graph above illustrates the outcome in terms of NPV in GBP/ha) over 
+      #   the simulated years, comparing the baseline scenario with the intervention. 
+      #   It highlights the differences in net cash flows between the two optioons. 
+      #   The right-skewness of the graph suggests that the intervention is generally 
+      #   favorable. However, since the distribution includes both positive and 
+      #   negative values, there remains a non-zero probability that the intervention 
+      #   may not always yield a more favorable outcome than the baseline. The 
+      #   integrated box plot shows that while the interquartile range (IQR) is mostly positive, 
+      #   it does include some negative values. The vertical line within the box plot represents the median NPV.'),
+      # downloadButton("save_plot2", "Save Plot"), 
+      # br(), # blank line
+      # br(), # blank line
+      h5('Probabilistic outcome of the decisions'),
       plotOutput("distPlot3"),
-      p(
-        'The graph above illustrates the cashflow in EURO/ha over 
-        the simulated years.'),
+      p('The graph above illustrates NPV outcomes (GBP/ha) over the simulation
+         period, directly comparing intervention scenarios against the baseline. 
+        The x-axis shows the NPV differential, where negative values indicate 
+        the baseline outperforming interventions and positive values show 
+        interventions outperforming the baseline. The y-axis represents 
+        probability density, with higher values indicating greater likelihood 
+        of achieving the corresponding NPV difference.'),
       downloadButton("save_plot3", "Save Plot") 
     )
   )
@@ -862,8 +896,8 @@ server <- function(input, output, session) {
   }
   
   # Get user ID or set default for testing
-  # user_id <- session$user %||% "local_test_user"
-  user_id <- session$user %||% "Adrian"
+  user_id <- session$user %||% "local_test_user"
+  # user_id <- session$user %||% "Adrian"
   is_admin <- user_id %in% admin_users
   
   # Output to determine if user is admin
@@ -904,20 +938,20 @@ server <- function(input, output, session) {
   
   # Reactive value to store versions
   versions <- reactiveVal()
-  
+
   # Function to update version selections
   updateVersionSelections <- function() {
-    vers <- basename(list.files(current_user_dir(), full.names = TRUE))
+    vers <- basename(list.files(current_user_dir(), full.names = TRUE, pattern = "csv"))
     versions(vers)
     updateSelectInput(session, "version_select", choices = versions())
     updateSelectInput(session, "delete_version_select", choices = versions())
   }
-  
+
   # Update versions when current_user_dir changes
   observe({
     updateVersionSelections()
   })
-  
+
   # Save settings
   observeEvent(input$save, {
     files <- list.files(current_user_dir(), full.names = TRUE, pattern = "\\.csv$")
@@ -1350,9 +1384,9 @@ server <- function(input, output, session) {
   # })
   # output$display_version_1 <- renderText({paste("This is version:", input$version)})
   # Open the URL in a browser when the button is clicked
-  observeEvent(input$open_url, {
-    url <- "https://www.gov.uk/government/publications/sustainable-farming-incentive-scheme-expanded-offer-for-2024"
-    utils::browseURL(url) })
+  # observeEvent(input$open_url, {
+  #   url <- "https://www.gov.uk/government/publications/sustainable-farming-incentive-scheme-expanded-offer-for-2024"
+  #   utils::browseURL(url) })
   
   #DA model ####
   
@@ -2403,12 +2437,20 @@ server <- function(input, output, session) {
     print(str(input$num_simulations_c))
     
     # Run Monte Carlo simulation
-    mcSimulation(
+    data <- 
+      mcSimulation(
       estimate = estimate_data,
       model_function = AF_benefit,
       numberOfModelRuns = input$num_simulations_c,
       functionSyntax = "plainNames"
     )
+    
+    dir_temp <- paste0(current_user_dir(),"/debug")
+    if (!dir.exists(dir_temp)) dir.create(dir_temp)
+    saveRDS(data,
+            paste0(dir_temp,"/mcResults_debug.rds"))
+    
+    data
   })
   
   #print (mcSimulation_results)
@@ -2473,12 +2515,11 @@ server <- function(input, output, session) {
         geom_boxplot(alpha = 0.4, outlier.size = 0.2, outlier.alpha = 0.2) + # Reduce outlier size and make them half transparent
         theme_minimal() +
         theme(
-          axis.text.y = element_text(size = 15,
-                                     angle = 360,
-                                     hjust = 0.5,
-                                     colour = "black"),
-          axis.text.x = element_text(size = 12, colour = "black"),
-          axis.title = element_text(size = 15, colour = "black"),
+          axis.title = element_text(size = 18, colour = "black"),
+          axis.text = element_text(size = 15,
+                                   # angle = 360,
+                                   # hjust = 0.5,
+                                   colour = "black"),
           axis.ticks.y = element_line(), 
           panel.background = element_rect(fill = "white",
                                           colour = "white"),
@@ -2495,29 +2536,29 @@ server <- function(input, output, session) {
         geom_hline(yintercept = 0, linetype = "dashed", color = "red", linewidth = 0.5)
     }
     
-    if(plot_type == "density"){
-      plot <- ggplot(stacked_data, aes(x = values, fill = ind, color = ind)) +
-        geom_density(alpha = 0.4, size = 0.7) + # Create density plot with transparency and line size
-        xlim( (min(stacked_data$values) - max(stacked_data$values)/5),
-              (max(stacked_data$values) + max(stacked_data$values)/5)
-        ) +
-        theme_minimal() +
-        theme(
-          axis.title = element_text(size = 15, colour = "black"),
-          axis.text.x = element_text(size = 12, colour = "black"),
-          axis.text.y = element_blank(),
-          panel.background =  element_rect(fill = "white",
-                                           colour = "white"),
-          plot.background =  element_rect(fill = "white",
-                                          colour = "white"),
-          legend.position = "none") +
-        scale_fill_manual(values = color_palette) +
-        labs(
-          x = "Outcome distribution [GBP/ha]",
-          y = "") +
-        #scale_x_continuous(breaks = seq(-75, max(stacked_data$values, na.rm = TRUE), by = 50)) +
-        geom_vline(xintercept = 0, linetype = "dashed", color = "red", size = 0.5)
-    }
+    # if(plot_type == "density"){
+    #   plot <- ggplot(stacked_data, aes(x = values, fill = ind, color = ind)) +
+    #     geom_density(alpha = 0.4, size = 0.7) + # Create density plot with transparency and line size
+    #     xlim( (min(stacked_data$values) - max(stacked_data$values)/5),
+    #           (max(stacked_data$values) + max(stacked_data$values)/5)
+    #     ) +
+    #     theme_minimal() +
+    #     theme(
+    #       axis.title = element_text(size = 15, colour = "black"),
+    #       axis.text.x = element_text(size = 12, colour = "black"),
+    #       axis.text.y = element_blank(),
+    #       panel.background =  element_rect(fill = "white",
+    #                                        colour = "white"),
+    #       plot.background =  element_rect(fill = "white",
+    #                                       colour = "white"),
+    #       legend.position = "none") +
+    #     scale_fill_manual(values = color_palette) +
+    #     labs(
+    #       x = "Outcome distribution [GBP/ha]",
+    #       y = "") +
+    #     #scale_x_continuous(breaks = seq(-75, max(stacked_data$values, na.rm = TRUE), by = 50)) +
+    #     geom_vline(xintercept = 0, linetype = "dashed", color = "red", size = 0.5)
+    # }
     
     if(plot_type =="ridge"){
       plot <- ggplot(stacked_data, aes(x = values, y = ind, fill = ind)) +
@@ -2525,7 +2566,9 @@ server <- function(input, output, session) {
         scale_y_discrete(expand = c(0.01, 0)) +
         theme_minimal() +
         theme(
-          axis.title = element_text(size = 15, colour = "black"),
+          axis.title = element_text(size = 18, colour = "black"),
+          axis.text.x = element_text(size = 15,
+                                     colour = "black"),
           axis.text.y = element_text(size = 15,
                                      # angle = 360,
                                      vjust = -6,

@@ -11,7 +11,7 @@
 "SRC_field_prep_p",2.6,3.8,"posnorm"
 "SRC_planting_p",4,8,"posnorm"
 "SRC_machine_rent_p",150,300,"posnorm"
-"harvest_interval_SRC_p",4,5,"posnorm"
+"harvest_interval_SRC_p",3,5,"posnorm"
 "af1_added_management_time_factor_p",1.05,1.2,"posnorm"
 "AF1_soil_loss_water_p",2,4,"posnorm"
 "AF1_soil_loss_wind_p",2,4,"posnorm"
